@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="640" viewBox="0 0 1440 640" role="img" aria-labelledby="title desc">
+  <title id="title">AI Lead Qualification</title>
+  <desc id="desc">Приём заявок, AI-квалификация и уведомление менеджера. Python, n8n, PostgreSQL, OpenAI и Telegram.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#111e2d"/><stop offset="1" stop-color="#172c3b"/></linearGradient>
+    <pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse"><path d="M44 0H0V44" fill="none" stroke="#cde7ea" stroke-opacity=".045"/></pattern>
+  </defs>
+  <rect width="1440" height="640" rx="24" fill="url(#bg)"/>
+  <rect width="1440" height="640" rx="24" fill="url(#grid)"/>
+  <path d="M0 623H1440" stroke="#63dfc2" stroke-width="3" stroke-opacity=".7"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <circle cx="69" cy="66" r="5" fill="#72e5c5"/>
+    <text x="86" y="72" fill="#a2b6c6" font-size="17" letter-spacing="2">ПРОЕКТ / AI-АВТОМАТИЗАЦИЯ</text>
+    <text x="64" y="184" fill="#f1f7fa" font-size="72" font-weight="700" letter-spacing="-2">AI Lead</text>
+    <text x="64" y="267" fill="#f1f7fa" font-size="72" font-weight="700" letter-spacing="-2">Qualification</text>
+    <text x="67" y="332" fill="#c5d7e1" font-size="26">От заявки на сайте</text>
+    <text x="67" y="371" fill="#c5d7e1" font-size="26">до оценки AI и сообщения менеджеру.</text>
+    <g fill="#203746" stroke="#365363">
+      <rect x="66" y="425" width="158" height="42" rx="10"/>
+      <rect x="234" y="425" width="71" height="42" rx="10"/>
+      <rect x="315" y="425" width="145" height="42" rx="10"/>
+      <rect x="470" y="425" width="106" height="42" rx="10"/>
+      <rect x="586" y="425" width="118" height="42" rx="10"/>
+    </g>
+    <g fill="#d9e6ed" font-size="17" text-anchor="middle">
+      <text x="145" y="452">Python / Flask</text><text x="269" y="452">n8n</text>
+      <text x="387" y="452">PostgreSQL</text><text x="523" y="452">OpenAI</text><text x="645" y="452">Telegram</text>
+    </g>
+    <text x="68" y="548" fill="#8aa4b5" font-size="18">Сохранение до ответа · повторы · восстановление</text>
+    <g transform="translate(902 114)">
+      <path d="M39 48V323" fill="none" stroke="#365a67" stroke-width="2"/>
+      <g fill="#1b3442" stroke="#3d5b68">
+        <rect width="440" height="92" rx="15"/><rect y="126" width="440" height="92" rx="15"/><rect y="252" width="440" height="92" rx="15"/>
+      </g>
+      <g fill="#67e0bf"><circle cx="39" cy="46" r="6"/><circle cx="39" cy="172" r="6"/><circle cx="39" cy="298" r="6"/></g>
+      <g fill="#edfaf6" font-size="23" font-weight="700"><text x="65" y="41">Сохранить</text><text x="65" y="167">Оценить</text><text x="65" y="293">Уведомить</text></g>
+      <g fill="#9eb8c5" font-size="17"><text x="65" y="68">Заявка и состояние в PostgreSQL</text><text x="65" y="194">Предварительная квалификация AI</text><text x="65" y="320">Результат в Telegram менеджера</text></g>
+    </g>
+  </g>
+</svg>

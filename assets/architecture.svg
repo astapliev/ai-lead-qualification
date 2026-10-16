@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="940" viewBox="0 0 1440 940" role="img" aria-labelledby="title desc">
+  <title id="title">Путь заявки в AI Lead Qualification</title>
+  <desc id="desc">Форма передаёт данные Flask, затем n8n Intake сохраняет заявку в PostgreSQL до ответа HTTP 202. Worker отдельно выполняет квалификацию OpenAI и доставку Telegram. Recovery подбирает доступную работу каждые пять минут.</desc>
+  <defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0 0L8 4L0 8" fill="none" stroke="#1b857e" stroke-width="1.5"/></marker></defs>
+  <rect width="1440" height="940" rx="20" fill="#f5f8fa"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="64" y="70" fill="#173345" font-size="34" font-weight="700">Как проходит заявка</text>
+    <text x="64" y="106" fill="#58717f" font-size="20">Приём и долгая обработка разделены. Источник состояния — PostgreSQL.</text>
+    <text x="64" y="169" fill="#16847b" font-size="16" font-weight="700" letter-spacing="1.5">01 / ПРИНЯТЬ И СОХРАНИТЬ</text>
+    <g fill="#fff" stroke="#cadbe3" stroke-width="1.5">
+      <rect x="64" y="194" width="250" height="114" rx="13"/><rect x="414" y="194" width="250" height="114" rx="13"/>
+      <rect x="764" y="194" width="250" height="114" rx="13"/><rect x="1114" y="194" width="262" height="114" rx="13"/>
+    </g>
+    <g fill="#173345" font-size="23" font-weight="700"><text x="88" y="237">Веб-форма</text><text x="438" y="237">Flask / Python</text><text x="788" y="237">n8n Intake</text><text x="1138" y="237">PostgreSQL</text></g>
+    <g fill="#58717f" font-size="17"><text x="88" y="272">Данные клиента</text><text x="438" y="272">Проверка запроса</text><text x="788" y="272">Приём и дедупликация</text><text x="1138" y="272">Сохранённая заявка</text></g>
+    <g fill="none" stroke="#1b857e" stroke-width="2" marker-end="url(#arrow)"><path d="M326 251H399"/><path d="M676 251H749"/><path d="M1026 251H1099"/></g>
+    <rect x="64" y="337" width="1312" height="62" rx="10" fill="#e4f1ed"/>
+    <circle cx="94" cy="368" r="6" fill="#16847b"/>
+    <text x="113" y="375" fill="#17675f" font-size="19">База подтвердила запись → форма получает HTTP 202 «Заявка принята»</text>
+    <text x="64" y="450" fill="#58717f" font-size="18">Intake пробуждает Worker. Форма не ждёт окончания AI и Telegram.</text>
+    <text x="64" y="516" fill="#16847b" font-size="16" font-weight="700" letter-spacing="1.5">02 / ОБРАБОТАТЬ И УВЕДОМИТЬ</text>
+    <g fill="#fff" stroke="#cadbe3" stroke-width="1.5">
+      <rect x="64" y="541" width="250" height="114" rx="13"/><rect x="414" y="541" width="250" height="114" rx="13"/>
+      <rect x="764" y="541" width="250" height="114" rx="13"/><rect x="1114" y="541" width="262" height="114" rx="13"/>
+    </g>
+    <g fill="#173345" font-size="23" font-weight="700"><text x="88" y="584">n8n Worker</text><text x="438" y="584">OpenAI</text><text x="788" y="584">PostgreSQL</text><text x="1138" y="584">Telegram</text></g>
+    <g fill="#58717f" font-size="17"><text x="88" y="619">Захват задачи из базы</text><text x="438" y="619">Оценка и объяснение</text><text x="788" y="619">Результат и состояния</text><text x="1138" y="619">Сообщение менеджеру</text></g>
+    <g fill="none" stroke="#1b857e" stroke-width="2" marker-end="url(#arrow)"><path d="M326 598H399"/><path d="M676 598H749"/><path d="M1026 598H1099"/></g>
+    <text x="64" y="693" fill="#58717f" font-size="17">AI и Telegram подбираются отдельно. В одном запуске они могут относиться к разным заявкам.</text>
+    <rect x="64" y="738" width="1312" height="134" rx="13" fill="#183345"/>
+    <text x="88" y="779" fill="#80e1c8" font-size="22" font-weight="700">Recovery / каждые 5 минут</text>
+    <text x="88" y="814" fill="#d6e5ec" font-size="18">Подбирает доступную и отложенную работу. До пяти вызовов Worker, выход при пустой очереди.</text>
+    <text x="88" y="842" fill="#a4bdca" font-size="17">После остановки с захватом сначала должен истечь срок владения задачей — 10 минут.</text>
+    <text x="64" y="912" fill="#6c8391" font-size="15">Схема архитектуры. Это не снимок текущего выполнения и не публичный доступ к редактору n8n.</text>
+  </g>
+</svg>

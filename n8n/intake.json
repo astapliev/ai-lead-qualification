@@ -1,0 +1,473 @@
+{
+  "name": "AI Lead Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-intake",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        1136,
+        816
+      ],
+      "id": "9b455f69-c9d7-4dca-9c40-fedbd1b7291e",
+      "name": "Lead Intake",
+      "webhookId": "3a2ab439-2fab-4ba1-ae37-4d5fc830aba1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  success: false,\n  message: \"Проверьте данные заявки.\",\n  errors: $json.validation_errors,\n  field_errors: $json.field_errors\n} }}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Server-Timing",
+                "value": "={{ \"validation;dur=\" + $(\"Normalize & Validate Lead Data\").first().json.validation_ms + \", intake;dur=\" + (Date.now() - $(\"Normalize & Validate Lead Data\").first().json.intake_started_at) }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1808,
+        912
+      ],
+      "id": "2005e13d-886d-4fdc-a548-327140b2e814",
+      "name": "Return Validation Errors"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8c9db6cd-2b85-4f91-8c08-e42e06073898",
+              "leftValue": "={{ $json.is_valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1584,
+        816
+      ],
+      "id": "6cad13a9-2750-4cbe-a9da-117f7f76f4aa",
+      "name": "Is Valid Lead"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n    outcome,\n    out_request_id AS request_id\nFROM public.enqueue_lead_v1($1::jsonb);",
+        "options": {
+          "queryReplacement": "={{ [ JSON.stringify($json.payload) ] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1808,
+        720
+      ],
+      "id": "c4dc738c-26ee-4abc-9f00-4f1eb24c9537",
+      "name": "Enqueue Lead",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.outcome }}",
+                    "rightValue": "accepted",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "2a299bb4-ffb4-4ff7-8e06-c7f7da8f4eca"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "bdbfb585-5a09-4bee-99a7-0ec3babe4cf7",
+                    "leftValue": "={{ $json.outcome }}",
+                    "rightValue": "duplicate",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "cb465fed-dfe0-460b-b5b0-cef4e9124b1a",
+                    "leftValue": "={{ $json.outcome }}",
+                    "rightValue": "conflict",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.5,
+      "position": [
+        2032,
+        560
+      ],
+      "id": "baf60938-8270-44a6-ac02-45bd24883db7",
+      "name": "Intake Outcome"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  success: true,\n  status: \"accepted\",\n  duplicate: false,\n  request_id: $json.request_id,\n  message: \"Заявка принята в обработку\"\n}) }}",
+        "options": {
+          "responseCode": 202,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Server-Timing",
+                "value": "={{ \"validation;dur=\" + $(\"Normalize & Validate Lead Data\").first().json.validation_ms + \", intake;dur=\" + (Date.now() - $(\"Normalize & Validate Lead Data\").first().json.intake_started_at) }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2256,
+        320
+      ],
+      "id": "39b3dee4-2dc1-46b3-a329-a8c9a3879b3f",
+      "name": "Return Accepted"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  success: true,\n  status: \"accepted\",\n  duplicate: true,\n  request_id: $json.request_id,\n  message: \"Заявка уже принята в обработку\"\n}) }}",
+        "options": {
+          "responseCode": 202,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Server-Timing",
+                "value": "={{ \"validation;dur=\" + $(\"Normalize & Validate Lead Data\").first().json.validation_ms + \", intake;dur=\" + (Date.now() - $(\"Normalize & Validate Lead Data\").first().json.intake_started_at) }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2256,
+        512
+      ],
+      "id": "8bd993ab-e31a-48f9-b4f7-718a0b27f904",
+      "name": "Return Duplicate"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  success: false,\n  code: \"request_id_conflict\",\n  request_id: $json.request_id,\n  message: \"Этот идентификатор уже используется для другой заявки. Данные не изменены.\"\n}) }}",
+        "options": {
+          "responseCode": 409,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Server-Timing",
+                "value": "={{ \"validation;dur=\" + $(\"Normalize & Validate Lead Data\").first().json.validation_ms + \", intake;dur=\" + (Date.now() - $(\"Normalize & Validate Lead Data\").first().json.intake_started_at) }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2256,
+        704
+      ],
+      "id": "b7dbcd0c-328f-4cc7-a2a7-59d54f63a2b8",
+      "name": "Return Conflict"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({\n  success: false,\n  code: \"intake_unavailable\",\n  message: \"Не удалось подтвердить приём заявки. Попробуйте позже.\"\n}) }}",
+        "options": {
+          "responseCode": 503,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Server-Timing",
+                "value": "={{ \"validation;dur=\" + $(\"Normalize & Validate Lead Data\").first().json.validation_ms + \", intake;dur=\" + (Date.now() - $(\"Normalize & Validate Lead Data\").first().json.intake_started_at) }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2256,
+        896
+      ],
+      "id": "1e38c7db-f3e4-4f83-9b51-fc02f524ea3e",
+      "name": "Return Unexpected Outcome"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: false, code: \"intake_unavailable\", message: \"Не удалось подтвердить приём заявки. Повторите отправку с тем же идентификатором.\" } }}",
+        "options": {
+          "responseCode": 503,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Server-Timing",
+                "value": "={{ \"validation;dur=\" + $(\"Normalize & Validate Lead Data\").first().json.validation_ms + \", intake;dur=\" + (Date.now() - $(\"Normalize & Validate Lead Data\").first().json.intake_started_at) }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2032,
+        816
+      ],
+      "id": "7e0385be-329a-4fb4-9c70-f796bc2328d5",
+      "name": "Return Intake DB Error"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_WORKER_ID",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        2480,
+        416
+      ],
+      "id": "ba2fb83e-8916-4ab8-b66c-895d402acfe6",
+      "name": "Wake Worker"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ========================================\n// AI LEAD INTAKE\n// Normalize & Validate Lead\n// ========================================\n\n// Разрешённые поля заявки\nconst FIELDS = [\n  \"request_id\",\n  \"name\",\n  \"contact\",\n  \"service\",\n  \"budget\",\n  \"message\",\n  \"timeline\"\n];\n\n// Разрешённые услуги\nconst SERVICES = new Set([\n  \"AI-автоматизация продаж\",\n  \"Автоматизация документооборота\",\n  \"AI-бот и поддержка клиентов\",\n  \"Интеграция CRM и бизнес-систем\",\n  \"Другая AI-автоматизация\"\n]);\n\n// Разрешённые сроки\nconst TIMELINES = new Set([\n  \"Срочно — до 7 дней\",\n  \"1–2 недели\",\n  \"До 1 месяца\",\n  \"1–3 месяца\",\n  \"Сроки гибкие\"\n]);\n\n// ========================================\n// UNICODE HELPERS\n// ========================================\n\n// Пробельные символы, распознаваемые\n// Python str.isspace() / str.split().\nconst PY_WS =\n  /[\\u0009-\\u000D\\u001C-\\u0020\\u0085\\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000]/u;\n\nconst PY_WS_RUN =\n  /[\\u0009-\\u000D\\u001C-\\u0020\\u0085\\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000]+/u;\n\nconst PY_WS_EDGES =\n  /^[\\u0009-\\u000D\\u001C-\\u0020\\u0085\\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000]+|[\\u0009-\\u000D\\u001C-\\u0020\\u0085\\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000]+$/gu;\n\n// Python считает длину строки в Unicode code points,\n// а JavaScript .length — в UTF-16 code units.\nfunction pyLength(value) {\n  return Array.from(value).length;\n}\n\nfunction pyTrim(value) {\n  return value.replace(PY_WS_EDGES, \"\");\n}\n\nfunction isCombiningMark(char) {\n  return /^\\p{M}$/u.test(char);\n}\n\n// ========================================\n// NAME\n// ========================================\n\nfunction normalizeName(value) {\n  if (typeof value !== \"string\") {\n    return null;\n  }\n\n  return value\n    .split(PY_WS_RUN)\n    .filter(Boolean)\n    .join(\" \");\n}\n\nfunction validName(value) {\n  if (value === null) {\n    return false;\n  }\n\n  const chars = Array.from(value);\n\n  if (chars.length < 2 || chars.length > 60) {\n    return false;\n  }\n\n  let letterCount = 0;\n\n  for (const char of chars) {\n\n    if (/^\\p{L}$/u.test(char)) {\n      letterCount++;\n      continue;\n    }\n\n    if (isCombiningMark(char)) {\n      continue;\n    }\n\n    if ([\" \", \"-\", \"'\", \"’\"].includes(char)) {\n      continue;\n    }\n\n    return false;\n  }\n\n  return letterCount >= 2;\n}\n\n// ========================================\n// TELEGRAM\n// ========================================\n\nfunction validTelegramUsername(value) {\n  if (!value.startsWith(\"@\")) {\n    return false;\n  }\n\n  const username = value.slice(1);\n\n  if (username.length < 5 || username.length > 32) {\n    return false;\n  }\n\n  return /^[A-Za-z][A-Za-z0-9_]*$/.test(username);\n}\n\n// ========================================\n// EMAIL\n// ========================================\n\nconst ALLOWED_EMAIL_LOCAL = new Set(\n  Array.from(\n    \"abcdefghijklmnopqrstuvwxyz\" +\n    \"ABCDEFGHIJKLMNOPQRSTUVWXYZ\" +\n    \"0123456789\" +\n    \"!#$%&'*+/=?^_`{|}~-\"\n  )\n);\n\nfunction validEmail(value) {\n\n  if (pyLength(value) > 254) {\n    return false;\n  }\n\n  if (PY_WS.test(value)) {\n    return false;\n  }\n\n  const atParts = value.split(\"@\");\n\n  if (atParts.length !== 2) {\n    return false;\n  }\n\n  const [local, domain] = atParts;\n\n  if (\n    pyLength(local) < 1 ||\n    pyLength(local) > 64\n  ) {\n    return false;\n  }\n\n  const localParts = local.split(\".\");\n\n  for (const part of localParts) {\n\n    if (!part) {\n      return false;\n    }\n\n    for (const char of part) {\n      if (!ALLOWED_EMAIL_LOCAL.has(char)) {\n        return false;\n      }\n    }\n  }\n\n  const labels = domain.split(\".\");\n\n  if (labels.length < 2) {\n    return false;\n  }\n\n  for (const label of labels) {\n\n    if (label.length < 1 || label.length > 63) {\n      return false;\n    }\n\n    if (!/^[A-Za-z0-9]/.test(label)) {\n      return false;\n    }\n\n    if (!/[A-Za-z0-9]$/.test(label)) {\n      return false;\n    }\n\n    if (!/^[A-Za-z0-9-]+$/.test(label)) {\n      return false;\n    }\n  }\n\n  const tld = labels[labels.length - 1];\n\n  if (tld.length < 2 || tld.length > 63) {\n    return false;\n  }\n\n  return /^[A-Za-z]+$/.test(tld);\n}\n\n// ========================================\n// CONTACT\n// ========================================\n\nfunction normalizeContact(contact) {\n\n  if (typeof contact !== \"string\") {\n    return null;\n  }\n\n  const colonIndex = contact.indexOf(\":\");\n\n  if (colonIndex === -1) {\n    return null;\n  }\n\n  const contactType = contact.slice(\n    0,\n    colonIndex\n  );\n\n  const value = pyTrim(\n    contact.slice(colonIndex + 1)\n  );\n\n  // Telegram\n  if (contactType === \"Telegram\") {\n\n    if (!validTelegramUsername(value)) {\n      return null;\n    }\n\n    return (\n      \"Telegram: @\" +\n      value.slice(1).toLowerCase()\n    );\n  }\n\n  // Российский телефон\n  if (contactType === \"Телефон\") {\n\n    if (pyLength(value) !== 12) {\n      return null;\n    }\n\n    if (!value.startsWith(\"+7\")) {\n      return null;\n    }\n\n    if (!/^[0-9]{10}$/.test(value.slice(2))) {\n      return null;\n    }\n\n    return \"Телефон: \" + value;\n  }\n\n  // Email\n  if (contactType === \"Email\") {\n\n    if (!validEmail(value)) {\n      return null;\n    }\n\n    return \"Email: \" + value.toLowerCase();\n  }\n\n  return null;\n}\n\n// ========================================\n// UUID VERSION 4\n// ========================================\n\nfunction validUUID4(value) {\n\n  if (typeof value !== \"string\") {\n    return false;\n  }\n\n  return (\n    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/\n      .test(value)\n  );\n}\n\n// ========================================\n// NORMALIZE & VALIDATE EVERY ITEM\n// ========================================\n\nconst startedAt = Date.now();\nreturn $input.all().map((item, index) => {\n\n  // Получаем HTTP body\n  const body = item.json?.body;\n\n  const source =\n    body &&\n    typeof body === \"object\" &&\n    !Array.isArray(body)\n      ? body\n      : {};\n\n  // Оставляем только разрешённые поля\n  const input = {};\n\n  for (const field of FIELDS) {\n    if (\n      Object.prototype.hasOwnProperty.call(\n        source,\n        field\n      )\n    ) {\n      input[field] = source[field];\n    }\n  }\n\n  const fieldErrors = {};\n\n  // NAME\n  const rawName = input.name ?? null;\n  const name = normalizeName(rawName);\n\n  if (typeof rawName !== \"string\") {\n\n    fieldErrors.name = \"Укажите имя.\";\n\n  } else if (!validName(name)) {\n\n    fieldErrors.name =\n      \"Укажите имя: от 2 до 60 символов, \" +\n      \"буквы, пробелы, дефис или апостроф.\";\n  }\n\n  // SERVICE\n  const service = input.service ?? null;\n\n  if (\n    typeof service !== \"string\" ||\n    !SERVICES.has(service)\n  ) {\n\n    fieldErrors.service =\n      \"Выберите услугу из списка.\";\n  }\n\n  // CONTACT\n  const contact = normalizeContact(\n    input.contact ?? null\n  );\n\n  if (contact === null) {\n\n    fieldErrors.contact =\n      \"Укажите корректный Telegram, \" +\n      \"email или российский телефон.\";\n  }\n\n  // BUDGET\n  const budget = input.budget ?? null;\n\n  if (budget !== null) {\n\n    if (\n      typeof budget !== \"number\" ||\n      !Number.isInteger(budget) ||\n      budget < 1 ||\n      budget > 1000000000\n    ) {\n\n      fieldErrors.budget =\n        \"Укажите бюджет в рублях: \" +\n        \"целое число от 1 до 1 000 000 000 \" +\n        \"или оставьте поле пустым.\";\n    }\n  }\n\n  // TIMELINE\n  let timeline = input.timeline ?? null;\n\n  if (timeline === \"\") {\n    timeline = null;\n  }\n\n  if (timeline !== null) {\n\n    if (\n      typeof timeline !== \"string\" ||\n      !TIMELINES.has(timeline)\n    ) {\n\n      fieldErrors.timeline =\n        \"Выберите срок из списка.\";\n    }\n  }\n\n  // MESSAGE\n  let message = input.message ?? null;\n\n  if (typeof message === \"string\") {\n\n    message = pyTrim(message);\n\n    if (\n      message.includes(\"\\u0000\") ||\n      pyLength(message) < 20 ||\n      pyLength(message) > 2000\n    ) {\n\n      fieldErrors.message =\n        \"Опишите задачу: от 20 до 2000 символов.\";\n    }\n\n  } else {\n\n    fieldErrors.message = \"Опишите задачу.\";\n  }\n\n  // REQUEST ID\n  const requestId = input.request_id ?? null;\n\n  if (!validUUID4(requestId)) {\n\n    fieldErrors.request_id =\n      \"Некорректный идентификатор заявки. \" +\n      \"Обновите страницу.\";\n  }\n\n  // FINAL OUTPUT\n  return {\n    json: {\n\n      intake_started_at: startedAt,\n      validation_ms: Date.now() - startedAt,\n      payload: { request_id: requestId, name, contact, service, budget, message, timeline },\n      request_id: requestId,\n      name,\n      contact,\n      service,\n      budget,\n      message,\n      timeline,\n\n      is_valid:\n        Object.keys(fieldErrors).length === 0,\n\n      validation_errors:\n        Object.values(fieldErrors),\n\n      field_errors:\n        fieldErrors\n    },\n\n    pairedItem: {\n      item: index\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        816
+      ],
+      "id": "e03024c6-70b5-4cc2-9c56-f12d33ee5579",
+      "name": "Normalize & Validate Lead Data"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Lead Intake": {
+      "main": [
+        [
+          {
+            "node": "Normalize & Validate Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Valid Lead": {
+      "main": [
+        [
+          {
+            "node": "Enqueue Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Validation Errors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enqueue Lead": {
+      "main": [
+        [
+          {
+            "node": "Intake Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Intake DB Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intake Outcome": {
+      "main": [
+        [
+          {
+            "node": "Return Accepted",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Duplicate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Conflict",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Unexpected Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Return Accepted": {
+      "main": [
+        [
+          {
+            "node": "Wake Worker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize & Validate Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Is Valid Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Return Duplicate": {
+      "main": [
+        [
+          {
+            "node": "Wake Worker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  }
+}

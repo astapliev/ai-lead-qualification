@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Демонстрационная форма заявки на автоматизацию бизнес-процессов. Проект портфолио Ацамаза."
+    >
+
+    <title>Заявка на автоматизацию · Ацамаз</title>
+
+    <style>
+* {box-sizing: border-box;}
+:root {
+  --text: #20342c; --text-soft: #52655b; --muted: #627269;
+  --accent: #217553; --danger: #b33d35; --border: #dce3dc;
+}
+html {scroll-behavior: smooth;}
+body {margin: 0; min-height: 100vh; background: #f4f6f1; color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased;}
+.background {display: none;}
+.page {width: min(1140px, calc(100% - 64px)); margin: 0 auto; padding: 28px 0 24px;}
+.topbar {display: flex; justify-content: space-between; align-items: center; gap: 20px; min-height: 44px; padding-bottom: 24px; margin-bottom: 38px; border-bottom: 1px solid var(--border);}
+.brand {display: flex; align-items: center; gap: 11px; font-size: 15px; font-weight: 650;}
+.brand-icon {width: 36px; height: 36px; border: 1px solid #cee0d0; background: #e6efe3; border-radius: 10px; display: grid; place-items: center; color: #277350;}
+.brand-icon svg {width: 22px; height: 22px;}
+.status {display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted);}
+.status-dot {width: 6px; height: 6px; border-radius: 50%; background: #8b9b87;}
+.main-layout {display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 62px; align-items: center;}
+.hero {padding: 24px 0; animation: enter .45s ease-out both;}
+.eyebrow {color: #4b7156; font-size: 12px; font-weight: 650; letter-spacing: .09em; text-transform: uppercase; margin-bottom: 22px;}
+h1 {margin: 0; font-size: clamp(42px, 4.5vw, 60px); font-weight: 650; letter-spacing: -.045em; line-height: 1.08;}
+.gradient-text {color: #3a7254;}
+.hero-description {max-width: 350px; color: var(--text-soft); font-size: 17px; line-height: 1.7; margin: 24px 0 0;}
+.demo-note {max-width: 320px; margin-top: 36px; padding: 0 0 0 15px; border-left: 2px solid #c7d6c5; color: var(--muted); font-size: 13px; line-height: 1.7;}
+.form-shell {min-width: 0; animation: enter .5s .05s ease-out both;}
+.form-glow {display: none;}
+.form-card {padding: 30px; background: #fff; border: 1px solid #e0e6dd; border-radius: 22px; box-shadow: 0 12px 40px #263c2410;}
+.form-header {margin-bottom: 25px;}
+.form-title {margin: 0 0 8px; font-size: 24px; line-height: 1.25; font-weight: 650; letter-spacing: -.025em;}
+.form-subtitle {margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6;}
+form {display: flex; flex-direction: column; gap: 18px;}
+.row {display: grid; grid-template-columns: 1fr 1fr; gap: 16px;}
+.field {display: flex; flex-direction: column; gap: 8px; min-width: 0;}
+.field-header {display: flex; align-items: center; justify-content: space-between; gap: 8px;}
+label {color: var(--text); font-size: 13px; line-height: 1.4; font-weight: 600;}
+.optional, .counter {color: var(--muted); font-size: 11px; font-weight: 400; white-space: nowrap;}
+input, select, textarea {width: 100%; border: 1px solid #d6dfd4; border-radius: 9px; color: var(--text); background: #fff; padding: 12px 13px; font: inherit; font-size: 14px; line-height: 1.35; transition: border-color .15s, box-shadow .15s; outline: none;}
+input:hover, select:hover, textarea:hover {border-color: #a7bca6;}
+input:focus, select:focus, textarea:focus {border-color: #3d845d; box-shadow: 0 0 0 3px #357d5115;}
+input::placeholder, textarea::placeholder {color: #7b887f; opacity: 1;}
+select {padding-right: 30px; cursor: pointer;}
+textarea {min-height: 112px; line-height: 1.6; resize: vertical;}
+input:disabled, select:disabled, textarea:disabled {background: #f4f6f2; color: #6f7e73; cursor: wait;}
+.field-hint {color: var(--muted); font-size: 12px; line-height: 1.5;}
+.field-error {display: none; color: var(--danger); font-size: 12px; line-height: 1.5;}
+.field.invalid > input, .field.invalid select, .field.invalid textarea {border-color: #c6574f; box-shadow: 0 0 0 2px #c6574f10;}
+.field.invalid .field-error {display: block;}
+.contact-tabs {display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; background: #f3f6f0; border: 1px solid #e0e7dc; border-radius: 10px;}
+.contact-option {position: relative; min-width: 0;}
+.contact-option input {position: absolute; width: 1px; height: 1px; opacity: 0;}
+.contact-option label {display: flex; align-items: center; justify-content: center; min-height: 34px; padding: 7px; border-radius: 6px; font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer;}
+.contact-option input:checked + label {color: #24573d; background: #fff; box-shadow: 0 1px 3px #263c2415;}
+.contact-option input:focus-visible + label {outline: 2px solid var(--accent); outline-offset: 1px;}
+.budget-preview {color: #397655; font-size: 12px;}
+.budget-preview:empty {display: none;}
+.consent {display: flex; align-items: flex-start; gap: 10px; color: var(--text-soft); font-size: 12px; font-weight: 400; line-height: 1.6; cursor: pointer;}
+.consent input {width: 16px; height: 16px; flex: 0 0 auto; margin: 2px 0 0; accent-color: var(--accent);}
+input[type=checkbox]:focus-visible {outline: 2px solid var(--accent); outline-offset: 3px;}
+.field.invalid .consent input {outline: 1px solid var(--danger); outline-offset: 2px;}
+.submit-button {width: 100%; border: 0; border-radius: 10px; padding: 15px; background: var(--accent); color: #fff; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: background .15s, transform .15s;}
+.submit-button:hover {background: #185f42;}
+.submit-button:active {transform: translateY(1px);}
+.submit-button:focus-visible {outline: 2px solid #3b8055; outline-offset: 4px;}
+.submit-button:disabled {cursor: wait; background: #5c8a70;}
+.button-content {display: inline-flex; align-items: center; justify-content: center; gap: 9px;}
+.spinner {display: none; width: 15px; height: 15px; border: 2px solid #ffffff60; border-top-color: #fff; border-radius: 50%; animation: spin .8s linear infinite;}
+.loading .spinner {display: inline-block;}
+.result {display: none;}
+.result.success, .result.error {display: flex; gap: 9px; align-items: flex-start; margin-top: 18px; padding: 12px 13px; border-radius: 9px; font-size: 13px; line-height: 1.5;}
+.result.success {background: #edf5eb; color: #286142;}
+.result.error {background: #fbefed; color: #983e35;}
+.result-icon {font-weight: 700; flex: 0 0 auto;}
+.footer {margin-top: 30px; color: var(--muted); font-size: 11px; text-align: center; line-height: 1.6;}
+.honeypot {position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;}
+@keyframes spin {to {transform: rotate(360deg);}}
+@keyframes enter {from {opacity: 0; transform: translateY(8px);} to {opacity: 1; transform: translateY(0);}}
+@media (max-width: 960px) {
+  .page {width: min(650px, calc(100% - 40px));}
+  .topbar {margin-bottom: 20px;}
+  .main-layout {grid-template-columns: 1fr; gap: 26px;}
+  .hero {padding: 8px 0 0;}
+  h1 {font-size: 44px;}
+  .hero-description {max-width: 520px; margin-top: 16px; font-size: 16px;}
+  .demo-note {max-width: 520px; margin-top: 18px; font-size: 12px;}
+  .eyebrow {margin-bottom: 14px;}
+}
+@media (max-width: 520px) {
+  .page {width: calc(100% - 28px); padding-top: 18px;}
+  .topbar {gap: 12px; align-items: flex-start; padding-bottom: 18px;}
+  .brand {font-size: 13px; gap: 8px;}
+  .status {display: none;}
+  .status-dot {flex: 0 0 auto;}
+  h1 {font-size: 39px;}
+  .form-card {padding: 22px 18px; border-radius: 16px;}
+  .form-title {font-size: 21px;}
+  .row {grid-template-columns: 1fr; gap: 18px;}
+  input, select, textarea {font-size: 16px;}
+  .footer {margin-top: 22px;}
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important;}
+}
+    </style>
+</head>
+
+
+<body>
+
+<div class="background">
+    <div class="orb one"></div>
+    <div class="orb two"></div>
+    <div class="orb three"></div>
+    <div class="grid-noise"></div>
+</div>
+
+
+<div class="page">
+
+    <nav class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="M7 17L12 7L17 17M9 13H15"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+            </div>
+
+            <span class="brand-name">
+                Ацамаз · Автоматизация
+            </span>
+
+        </div>
+
+
+        <div class="status">
+
+            <span class="status-dot"></span>
+
+            Демонстрационный проект
+
+        </div>
+
+    </nav>
+
+
+    <main class="main-layout">
+
+
+        <!-- ==========================
+             LEFT SIDE
+        =========================== -->
+
+        <section class="hero">
+
+            <div class="eyebrow">Заявка на проект</div>
+            <h1>Обсудим<br><span class="gradient-text">вашу задачу</span></h1>
+            <p class="hero-description">
+                Расскажите, что хотите автоматизировать,
+                и оставьте удобный контакт для связи.
+            </p>
+            <p class="demo-note">
+                Это демонстрационный проект.
+                Для проверки используйте тестовые данные.
+            </p>
+        </section>
+
+
+        <!-- ==========================
+             FORM
+        =========================== -->
+
+        <section class="form-shell">
+
+            <div class="form-glow"></div>
+
+
+            <div class="form-card">
+
+                <div class="form-header">
+
+                    <h2 class="form-title">
+                        Заявка на автоматизацию
+                    </h2>
+
+                    <p class="form-subtitle">
+                        Укажите контакт и опишите задачу. Бюджет и сроки можно уточнить позже.
+                    </p>
+
+                </div>
+
+
+                <form
+                    id="lead-form"
+                    novalidate
+                >
+
+                    <!-- Honeypot -->
+
+                    <div class="honeypot">
+                        <label for="website">
+                            Website
+                        </label>
+
+                        <input
+                            id="website"
+                            name="website"
+                            type="text"
+                            tabindex="-1"
+                            autocomplete="off"
+                        >
+                    </div>
+
+
+                    <!-- Name + Service -->
+
+                    <div class="row">
+
+
+                        <div
+                            class="field"
+                            data-field="name"
+                        >
+
+                            <div class="field-header">
+                                <label for="name">
+                                    Имя
+                                </label>
+                            </div>
+
+                            <input
+                                id="name"
+                                name="name"
+                                type="text"
+
+                                placeholder="Александр"
+
+                                autocomplete="name"
+
+                                minlength="2"
+                                maxlength="60"
+
+                                required
+                            >
+
+                            <div class="field-error"></div>
+
+                        </div>
+
+
+                        <div
+                            class="field"
+                            data-field="service"
+                        >
+
+                            <div class="field-header">
+                                <label for="service">
+                                    Что хотите автоматизировать?
+                                </label>
+                            </div>
+
+                            <select
+                                id="service"
+                                name="service"
+                                required
+                            >
+
+                                <option
+                                    value=""
+                                    selected
+                                    disabled
+                                >
+                                    Выберите вариант
+                                </option>
+
+                                <option
+                                    value="AI-автоматизация продаж"
+                                >
+                                    Заявки и продажи
+                                </option>
+
+                                <option
+                                    value="Автоматизация документооборота"
+                                >
+                                    Документы
+                                </option>
+
+                                <option
+                                    value="AI-бот и поддержка клиентов"
+                                >
+                                    Поддержка клиентов
+                                </option>
+
+                                <option
+                                    value="Интеграция CRM и бизнес-систем"
+                                >
+                                    CRM и обмен данными
+                                </option>
+
+                                <option
+                                    value="Другая AI-автоматизация"
+                                >
+                                    Другая задача / пока не знаю
+                                </option>
+
+                            </select>
+
+                            <div class="field-error"></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Contact type -->
+
+                    <div
+                        class="field"
+                        data-field="contact"
+                    >
+
+                        <div class="field-header">
+
+                            <span id="contact-type-label">Способ связи</span>
+
+                        </div>
+
+
+                        <div
+                            class="contact-tabs"
+                            id="contact-tabs"
+                            role="radiogroup"
+                            aria-labelledby="contact-type-label"
+                        >
+
+                            <div class="contact-option">
+
+                                <input
+                                    id="contact-telegram"
+                                    type="radio"
+                                    name="contact_type"
+                                    value="Telegram"
+                                    checked
+                                >
+
+                                <label
+                                    for="contact-telegram"
+                                >
+                                    Telegram
+                                </label>
+
+                            </div>
+
+
+                            <div class="contact-option">
+
+                                <input
+                                    id="contact-email"
+                                    type="radio"
+                                    name="contact_type"
+                                    value="Email"
+                                >
+
+                                <label
+                                    for="contact-email"
+                                >
+                                    Email
+                                </label>
+
+                            </div>
+
+
+                            <div class="contact-option">
+
+                                <input
+                                    id="contact-phone"
+                                    type="radio"
+                                    name="contact_type"
+                                    value="Телефон"
+                                >
+
+                                <label
+                                    for="contact-phone"
+                                >
+                                    Телефон
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        <label id="contact-label" for="contact">Ваш Telegram</label>
+                        <input
+                            id="contact"
+                            type="text"
+
+                            placeholder="@username"
+
+                            maxlength="254"
+
+                            autocomplete="off"
+
+                            spellcheck="false"
+
+                            required
+                        >
+
+
+                        <div class="field-error"></div>
+
+                        <div
+                            class="field-hint"
+                            id="contact-hint"
+                        >
+                            Можно указать @username или ссылку t.me
+                        </div>
+
+                    </div>
+
+
+                    <!-- Budget + Timeline -->
+
+                    <div class="row">
+
+
+                        <div
+                            class="field"
+                            data-field="budget"
+                        >
+
+                            <div class="field-header">
+
+                                <label for="budget">
+                                    Бюджет, ₽
+                                </label>
+                                <span class="optional">необязательно</span>
+
+                            </div>
+
+
+                            <input
+                                id="budget"
+                                name="budget"
+
+                                type="number"
+
+                                inputmode="numeric"
+
+                                placeholder="Если бюджет уже определён"
+
+                                min="1"
+                                max="1000000000"
+                                step="1"
+
+                            >
+
+
+                            <div
+                                class="budget-preview"
+                                id="budget-preview"
+                            ></div>
+                            <div class="field-hint">Если пока не знаете — оставьте поле пустым.</div>
+
+
+                            <div class="field-error"></div>
+
+                        </div>
+
+
+                        <div
+                            class="field"
+                            data-field="timeline"
+                        >
+
+                            <div class="field-header">
+
+                                <label for="timeline">
+                                    Сроки
+                                </label>
+
+                                <span class="optional">
+                                    необязательно
+                                </span>
+
+                            </div>
+
+
+                            <select
+                                id="timeline"
+                                name="timeline"
+                            >
+
+                                <option value="">
+                                    Пока не определены
+                                </option>
+
+                                <option
+                                    value="Срочно — до 7 дней"
+                                >
+                                    Срочно — до 7 дней
+                                </option>
+
+                                <option
+                                    value="1–2 недели"
+                                >
+                                    1–2 недели
+                                </option>
+
+                                <option
+                                    value="До 1 месяца"
+                                >
+                                    До 1 месяца
+                                </option>
+
+                                <option
+                                    value="1–3 месяца"
+                                >
+                                    1–3 месяца
+                                </option>
+
+                                <option
+                                    value="Сроки гибкие"
+                                >
+                                    Сроки гибкие
+                                </option>
+
+                            </select>
+
+
+                            <div class="field-error"></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Message -->
+
+                    <div
+                        class="field"
+                        data-field="message"
+                    >
+
+                        <div class="field-header">
+
+                            <label for="message">
+                                Задача
+                            </label>
+
+                            <span
+                                class="counter"
+                                id="message-counter"
+                            >
+                                0 / 2000
+                            </span>
+
+                        </div>
+
+
+                        <textarea
+                            id="message"
+                            name="message"
+
+                            placeholder="Что сейчас происходит вручную, что хотите автоматизировать и какой результат ожидаете?"
+
+                            minlength="20"
+                            maxlength="2000"
+
+                            required
+                        ></textarea>
+
+
+                        <div class="field-error"></div>
+
+
+                        <div class="field-hint">
+                            Опишите текущий процесс и желаемый результат. От 20 до 2000 символов.
+                        </div>
+
+                    </div>
+
+
+                    <!-- Consent -->
+
+                    <div class="field" data-field="consent">
+                        <label class="consent">
+                            <input id="consent" type="checkbox" required>
+                            <span>Я согласен на обработку данных из этой заявки.</span>
+                        </label>
+                        <div class="field-error"></div>
+                    </div>
+
+                    <!-- Submit -->
+
+                    <button
+                        class="submit-button"
+                        id="submit-button"
+                        type="submit"
+                    >
+
+                        <span class="button-content">
+
+                            <span class="spinner"></span>
+
+                            <span id="button-text">
+                                Отправить заявку
+                            </span>
+
+                        </span>
+
+                    </button>
+
+                </form>
+
+
+                <div
+                    id="result"
+                    class="result"
+                    aria-live="polite"
+                ></div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer class="footer">
+        Проект портфолио Ацамаза · AI Lead Qualification
+    </footer>
+
+</div>
+
+
+<script>
+(() => {
+
+    "use strict";
+
+
+    /* ================================
+       ELEMENTS
+    ================================= */
+
+    const form =
+        document.getElementById("lead-form");
+
+    const submitButton =
+        document.getElementById("submit-button");
+
+    const buttonText =
+        document.getElementById("button-text");
+
+    const result =
+        document.getElementById("result");
+
+    const nameInput =
+        document.getElementById("name");
+
+    const serviceInput =
+        document.getElementById("service");
+
+    const contactInput =
+        document.getElementById("contact");
+
+    const contactHint =
+        document.getElementById("contact-hint");
+
+    const budgetInput =
+        document.getElementById("budget");
+
+    const budgetPreview =
+        document.getElementById("budget-preview");
+
+    const timelineInput =
+        document.getElementById("timeline");
+
+    const messageInput =
+        document.getElementById("message");
+
+    const messageCounter =
+        document.getElementById("message-counter");
+
+    const consentInput =
+        document.getElementById("consent");
+
+    const honeypot =
+        document.getElementById("website");
+
+
+    /* ================================
+       STATE
+    ================================= */
+
+    const state = {
+
+        submitting: false,
+        submitAttempted: false,
+        contactDrafts: {Telegram: "", Email: "", "Телефон": ""},
+        activeContactType: null,
+
+        /*
+            Важная деталь.
+
+            requestId НЕ генерируем заново
+            при каждой повторной попытке.
+
+            Если сеть оборвётся после того,
+            как n8n уже сохранил заявку,
+            повторный submit пойдёт
+            с тем же request_id.
+
+            Тогда защита от дублей в n8n
+            действительно сработает.
+        */
+
+        requestId: null,
+        payloadFingerprint: null
+
+    };
+
+
+    /* ================================
+       ALLOWED VALUES
+    ================================= */
+
+    const allowedServices =
+        new Set([
+            "AI-автоматизация продаж",
+            "Автоматизация документооборота",
+            "AI-бот и поддержка клиентов",
+            "Интеграция CRM и бизнес-систем",
+            "Другая AI-автоматизация"
+        ]);
+
+
+    const allowedTimelines =
+        new Set([
+            "",
+            "Срочно — до 7 дней",
+            "1–2 недели",
+            "До 1 месяца",
+            "1–3 месяца",
+            "Сроки гибкие"
+        ]);
+
+
+    /* ================================
+       HELPERS
+    ================================= */
+
+    function normalizeSpaces(value) {
+
+        return String(value)
+            .trim()
+            .replace(/\s+/g, " ");
+
+    }
+
+
+    function getContactType() {
+
+        const selected =
+            document.querySelector(
+                'input[name="contact_type"]:checked'
+            );
+
+        return selected
+            ? selected.value
+            : "Telegram";
+
+    }
+
+
+    function getField(name) {
+
+        if (!["name", "service", "contact", "budget", "timeline", "message", "consent"].includes(name)) return null;
+        return document.querySelector(`[data-field="${name}"]`);
+
+    }
+
+
+    function showFieldError(
+        fieldName,
+        message
+    ) {
+
+        const field =
+            getField(fieldName);
+
+        if (!field) {
+            return;
+        }
+
+        field.classList.add("invalid");
+        document.getElementById(fieldName)?.setAttribute("aria-invalid", "true");
+
+        const error =
+            field.querySelector(
+                ".field-error"
+            );
+
+        if (error) {
+            error.textContent = message;
+        }
+
+    }
+
+
+    function clearFieldError(
+        fieldName
+    ) {
+
+        const field =
+            getField(fieldName);
+
+        if (!field) {
+            return;
+        }
+
+        field.classList.remove("invalid");
+        document.getElementById(fieldName)?.removeAttribute("aria-invalid");
+
+        const error =
+            field.querySelector(
+                ".field-error"
+            );
+
+        if (error) {
+            error.textContent = "";
+        }
+
+    }
+
+
+    function showResult(
+        type,
+        message
+    ) {
+
+        result.className =
+            `result ${type}`;
+
+        const icon =
+            type === "success"
+                ? "✓"
+                : "!";
+
+        result.innerHTML = `
+            <span class="result-icon">
+                ${icon}
+            </span>
+
+            <span>
+                ${escapeHtml(message)}
+            </span>
+        `;
+
+    }
+
+
+    function hideResult() {
+
+        result.className =
+            "result";
+
+        result.innerHTML =
+            "";
+
+    }
+
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+
+    }
+
+
+    function setLoading(
+        loading
+    ) {
+
+        state.submitting =
+            loading;
+
+        submitButton.disabled = loading;
+        form.setAttribute("aria-busy", String(loading));
+        form.querySelectorAll("input, select, textarea").forEach(control => {
+            control.disabled = loading;
+        });
+
+        submitButton.classList.toggle(
+            "loading",
+            loading
+        );
+
+        buttonText.textContent =
+            loading
+                ? "Отправляем заявку..."
+                : "Отправить заявку";
+
+    }
+
+
+    /* ================================
+       UUID
+    ================================= */
+
+    function createUUID() {
+
+        if (
+            window.crypto &&
+            typeof crypto.randomUUID === "function"
+        ) {
+
+            return crypto.randomUUID();
+
+        }
+
+
+        /*
+            Fallback для старых браузеров.
+        */
+
+        const bytes =
+            crypto.getRandomValues(
+                new Uint8Array(16)
+            );
+
+        bytes[6] =
+            (bytes[6] & 0x0f) | 0x40;
+
+        bytes[8] =
+            (bytes[8] & 0x3f) | 0x80;
+
+
+        const hex =
+            [...bytes]
+                .map(
+                    byte =>
+                        byte
+                            .toString(16)
+                            .padStart(2, "0")
+                )
+                .join("");
+
+
+        return [
+            hex.slice(0, 8),
+            hex.slice(8, 12),
+            hex.slice(12, 16),
+            hex.slice(16, 20),
+            hex.slice(20)
+        ].join("-");
+
+    }
+
+
+    /* ================================
+       NAME VALIDATION
+    ================================= */
+
+    function validateName() {
+
+        clearFieldError("name");
+
+
+        const name =
+            normalizeSpaces(
+                nameInput.value
+            );
+
+
+        if (!name) {
+
+            showFieldError(
+                "name",
+                "Укажите имя."
+            );
+
+            return null;
+        }
+
+
+        if ([...name].length < 2) {
+
+            showFieldError(
+                "name",
+                "Имя слишком короткое."
+            );
+
+            return null;
+        }
+
+
+        if ([...name].length > 60) {
+
+            showFieldError(
+                "name",
+                "Максимум 60 символов."
+            );
+
+            return null;
+        }
+
+
+        /*
+            Разрешаем буквы любых языков,
+            пробелы, дефисы и апострофы.
+        */
+
+        const pattern =
+            /^[\p{L}\p{M}'’ -]+$/u;
+
+
+        if (!pattern.test(name)) {
+
+            showFieldError(
+                "name",
+                "Используйте буквы, пробелы, дефис или апостроф."
+            );
+
+            return null;
+        }
+
+
+        const letterCount =
+            (
+                name.match(/\p{L}/gu)
+                || []
+            ).length;
+
+
+        if (letterCount < 2) {
+
+            showFieldError(
+                "name",
+                "В имени должно быть не меньше двух букв."
+            );
+
+            return null;
+        }
+
+
+        nameInput.value =
+            name;
+
+
+        return name;
+
+    }
+
+
+    /* ================================
+       SERVICE VALIDATION
+    ================================= */
+
+    function validateService() {
+
+        clearFieldError("service");
+
+
+        const service =
+            serviceInput.value;
+
+
+        if (
+            !allowedServices.has(service)
+        ) {
+
+            showFieldError(
+                "service",
+                "Выберите подходящий вариант или «Другая задача / пока не знаю»."
+            );
+
+            return null;
+        }
+
+
+        return service;
+
+    }
+
+
+    /* ================================
+       TELEGRAM
+    ================================= */
+
+    function normalizeTelegram(value) {
+        const match = String(value).trim().match(
+            /^(?:@|(?:https?:\/\/)?t\.me\/)?([A-Za-z][A-Za-z0-9_]{4,31})\/?$/i
+        );
+        return match ? `@${match[1].toLowerCase()}` : null;
+    }
+
+    function normalizeEmail(value) {
+        const email = String(value).trim().toLowerCase();
+        if (email.length > 254 || /[\s\u0085\u001c-\u001f]/u.test(email)) return null;
+        const parts = email.split("@");
+        if (parts.length !== 2) return null;
+        const [local, domain] = parts;
+        if (!local || local.length > 64 || local.startsWith(".")
+            || local.endsWith(".") || local.includes("..")) return null;
+        if (!/^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+$/i.test(local)) return null;
+        if (!/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/i.test(domain)) return null;
+        return email;
+    }
+
+    function normalizePhone(value) {
+        const raw = String(value).trim();
+        if (!/^\+?[0-9\s()-]+$/.test(raw)) return null;
+        const digits = raw.replace(/[^0-9]/g, "");
+        if (!/^[78][0-9]{10}$/.test(digits)) return null;
+        return "+7" + digits.slice(1);
+    }
+
+    /* ================================
+       CONTACT VALIDATION
+    ================================= */
+
+    function validateContact() {
+
+        clearFieldError("contact");
+
+
+        const type =
+            getContactType();
+
+
+        const value =
+            contactInput.value.trim();
+
+
+        if (!value) {
+
+            showFieldError(
+                "contact",
+                "Укажите контакт."
+            );
+
+            return null;
+
+        }
+
+
+        if (
+            type === "Telegram"
+        ) {
+
+            const telegram =
+                normalizeTelegram(
+                    value
+                );
+
+
+            if (!telegram) {
+
+                showFieldError(
+                    "contact",
+                    "Введите @username или ссылку t.me/username."
+                );
+
+                return null;
+            }
+
+
+            return {
+                type,
+                value: telegram
+            };
+
+        }
+
+
+        if (
+            type === "Email"
+        ) {
+
+            const email =
+                normalizeEmail(
+                    value
+                );
+
+
+            if (!email) {
+
+                showFieldError(
+                    "contact",
+                    "Введите корректный email."
+                );
+
+                return null;
+            }
+
+
+            return {
+                type,
+                value: email
+            };
+
+        }
+
+
+        if (
+            type === "Телефон"
+        ) {
+
+            const phone =
+                normalizePhone(
+                    value
+                );
+
+
+            if (!phone) {
+
+                showFieldError(
+                    "contact",
+                    "Введите российский номер: 89181234567 или +79181234567."
+                );
+
+                return null;
+            }
+
+
+            return {
+                type,
+                value: phone
+            };
+
+        }
+
+
+        return null;
+
+    }
+
+
+    /* ================================
+       BUDGET
+    ================================= */
+
+    function validateBudget() {
+        clearFieldError("budget");
+        if (budgetInput.validity.badInput) {
+            showFieldError("budget", "Укажите сумму целым числом или оставьте поле пустым.");
+            return undefined;
+        }
+        const raw = budgetInput.value.trim();
+        if (!raw) return null;
+        const budget = Number(raw);
+        if (!Number.isSafeInteger(budget) || budget < 1 || budget > 1_000_000_000) {
+            showFieldError("budget", "Укажите целую сумму от 1 до 1 000 000 000 ₽ или оставьте поле пустым.");
+            return undefined;
+        }
+        return budget;
+    }
+
+    /* ================================
+       TIMELINE
+    ================================= */
+
+    function validateTimeline() {
+
+        clearFieldError("timeline");
+
+
+        const timeline =
+            timelineInput.value;
+
+
+        if (
+            !allowedTimelines.has(
+                timeline
+            )
+        ) {
+
+            showFieldError(
+                "timeline",
+                "Некорректное значение."
+            );
+
+            return null;
+
+        }
+
+
+        return timeline;
+
+    }
+
+
+    /* ================================
+       MESSAGE
+    ================================= */
+
+    function validateMessage() {
+
+        clearFieldError("message");
+
+
+        const message = messageInput.value.trim();
+
+
+        if (!message) {
+
+            showFieldError(
+                "message",
+                "Опишите задачу."
+            );
+
+            return null;
+        }
+
+
+        if (
+            [...message].length < 20
+        ) {
+
+            showFieldError(
+                "message",
+                "Добавьте немного больше деталей — минимум 20 символов."
+            );
+
+            return null;
+        }
+
+
+        if (
+            [...message].length > 2000
+        ) {
+
+            showFieldError(
+                "message",
+                "Максимум 2000 символов."
+            );
+
+            return null;
+        }
+
+
+        return message;
+
+    }
+
+
+    /* ================================
+       FULL VALIDATION
+    ================================= */
+
+    function validateForm() {
+
+        const name =
+            validateName();
+
+        const service =
+            validateService();
+
+        const contact =
+            validateContact();
+
+        const budget =
+            validateBudget();
+
+        const timeline =
+            validateTimeline();
+
+        const message =
+            validateMessage();
+
+
+        clearFieldError("consent");
+        if (!name || !service || !contact || budget === undefined
+            || timeline === null || message === null) {
+            showResult("error", "Заполните или исправьте выделенные поля.");
+            return null;
+        }
+        if (!consentInput.checked) {
+            showFieldError("consent", "Для отправки нужно согласие на обработку данных.");
+            showResult("error", "Данные заполнены. Подтвердите согласие перед отправкой.");
+            return null;
+        }
+
+        return {
+            name,
+            service,
+            contact,
+            budget,
+            timeline: timeline || null,
+            message
+        };
+
+    }
+
+
+    /* ================================
+       CONTACT UI
+    ================================= */
+
+    function updateContactUI() {
+
+        const type =
+            getContactType();
+
+
+        clearFieldError("contact");
+
+        if (state.activeContactType) {
+            state.contactDrafts[state.activeContactType] = contactInput.value;
+        }
+        document.getElementById("contact-label").textContent =
+            type === "Telegram" ? "Ваш Telegram" : type === "Email" ? "Ваш email" : "Ваш телефон";
+        state.activeContactType = type;
+        contactInput.value = state.contactDrafts[type] || "";
+
+
+        if (
+            type === "Telegram"
+        ) {
+
+            contactInput.type =
+                "text";
+
+            contactInput.placeholder =
+                "@username или t.me/username";
+
+            contactInput.autocomplete =
+                "off";
+
+            contactInput.inputMode =
+                "text";
+
+            contactHint.textContent =
+                "Можно указать @username или ссылку t.me.";
+
+        }
+
+
+        else if (
+            type === "Email"
+        ) {
+
+            contactInput.type =
+                "email";
+
+            contactInput.placeholder =
+                "name@example.com";
+
+            contactInput.autocomplete =
+                "email";
+
+            contactInput.inputMode =
+                "email";
+
+            contactHint.textContent =
+                "Используйте рабочий email.";
+
+        }
+
+
+        else {
+
+            contactInput.type =
+                "tel";
+
+            contactInput.placeholder =
+                "+7 918 123-45-67";
+
+            contactInput.autocomplete =
+                "tel";
+
+            contactInput.inputMode =
+                "tel";
+
+            contactHint.textContent =
+                "Подойдут +7 или номер, начинающийся с 8.";
+
+        }
+
+    }
+
+
+    /* ================================
+       BUDGET UI
+    ================================= */
+
+    function updateBudgetPreview() {
+
+        const budget =
+            Number(
+                budgetInput.value
+            );
+
+
+        if (
+            !Number.isFinite(budget)
+            || budget <= 0
+        ) {
+
+            budgetPreview.textContent =
+                "";
+
+            return;
+        }
+
+
+        budgetPreview.textContent =
+            new Intl.NumberFormat(
+                "ru-RU"
+            ).format(budget)
+            + " ₽";
+
+    }
+
+
+    /* ================================
+       MESSAGE COUNTER
+    ================================= */
+
+    function updateMessageCounter() {
+
+        const length =
+            [...messageInput.value].length;
+
+
+        messageCounter.textContent =
+            `${length} / 2000`;
+
+
+        messageCounter.style.color =
+            length > 1850
+                ? "#ff9c75"
+                : "#65708c";
+
+    }
+
+
+    /* ================================
+       EVENTS
+    ================================= */
+
+    document
+        .querySelectorAll(
+            'input[name="contact_type"]'
+        )
+        .forEach(
+            radio => {
+
+                radio.addEventListener(
+                    "change",
+                    updateContactUI
+                );
+
+            }
+        );
+
+
+    // Первая проверка — при отправке. Затем помогаем исправить ошибки.
+    const validators = {
+        name: validateName,
+        service: validateService,
+        contact: validateContact,
+        budget: validateBudget,
+        timeline: validateTimeline,
+        message: validateMessage
+    };
+    Object.entries(validators).forEach(([name, validate]) => {
+        const control = document.getElementById(name);
+        control.addEventListener("blur", () => {
+            if (state.submitAttempted) validate();
+        });
+        control.addEventListener("input", () => {
+            hideResult();
+            if (getField(name).classList.contains("invalid")) validate();
+        });
+        control.addEventListener("change", () => {
+            if (state.submitAttempted) validate();
+        });
+    });
+    budgetInput.addEventListener("input", updateBudgetPreview);
+    messageInput.addEventListener("input", updateMessageCounter);
+    consentInput.addEventListener("change", () => {
+        clearFieldError("consent");
+        hideResult();
+    });
+
+    /* ================================
+       SUBMIT
+    ================================= */
+
+    form.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+
+            if (
+                state.submitting
+            ) {
+
+                return;
+
+            }
+
+
+            hideResult();
+
+
+            /*
+                Honeypot.
+
+                Обычный человек этого поля
+                вообще не видит.
+
+                Простые боты часто заполняют
+                все поля формы.
+            */
+
+            if (
+                honeypot.value.trim()
+            ) {
+
+                /*
+                    Не рассказываем боту,
+                    почему запрос отклонён.
+                */
+
+                showResult(
+                    "error",
+                    "Не удалось отправить заявку. Обновите страницу и попробуйте снова."
+                );
+
+                return;
+
+            }
+
+
+            state.submitAttempted = true;
+            const validated = validateForm();
+
+
+            if (!validated) {
+
+                const firstInvalid =
+                    document.querySelector(
+                        ".field.invalid input:not([type='radio']):not([type='hidden']), .field.invalid select, .field.invalid textarea"
+                    );
+
+
+                if (firstInvalid) {
+
+                    firstInvalid.focus();
+
+                }
+
+
+                return;
+
+            }
+
+
+            // Один ID соответствует одному содержимому заявки.
+            // Повтор после таймаута сохраняет ID; изменение данных создаёт новый.
+            const leadData = {
+                name: validated.name,
+                contact: `${validated.contact.type}: ${validated.contact.value}`,
+                service: validated.service,
+                budget: validated.budget,
+                message: validated.message,
+                timeline: validated.timeline
+            };
+            const fingerprint = JSON.stringify(leadData);
+            if (!state.requestId || state.payloadFingerprint !== fingerprint) {
+                state.requestId = createUUID();
+                state.payloadFingerprint = fingerprint;
+            }
+            const payload = {request_id: state.requestId, ...leadData, consent: consentInput.checked, website: honeypot.value};
+
+            setLoading(true);
+
+
+            /*
+                Frontend timeout чуть больше,
+                чем timeout Flask (60 секунд).
+            */
+
+            const controller =
+                new AbortController();
+
+
+            const timeout =
+                setTimeout(
+                    () =>
+                        controller.abort(),
+                    65_000
+                );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/lead",
+                        {
+                            method:
+                                "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    payload
+                                ),
+
+                            signal:
+                                controller.signal
+                        }
+                    );
+
+
+                let data;
+
+
+                try {
+
+                    data =
+                        await response.json();
+
+                }
+
+                catch {
+
+                    throw new Error(
+                        "INVALID_SERVER_RESPONSE"
+                    );
+
+                }
+
+
+                if (!data || typeof data !== "object" || Array.isArray(data)
+                    || typeof data.success !== "boolean") {
+                    throw new Error("INVALID_SERVER_RESPONSE");
+                }
+
+                /*
+                    В том числе сюда попадёт
+                    duplicate response,
+                    потому что n8n возвращает
+                    success:true + HTTP 200.
+                */
+
+                if (
+                    response.ok
+                    && data.success === true
+                ) {
+
+                    const duplicate =
+                        data.duplicate === true;
+
+
+                    showResult(
+                        "success",
+
+                        duplicate
+
+                            ? "Эта заявка уже была принята ранее. Повторно отправлять её не нужно."
+
+                            : "Заявка принята. Спасибо!"
+                    );
+
+
+                    /*
+                        Только после подтверждённого
+                        успеха создадим новый
+                        request_id для следующей заявки.
+                    */
+
+                    state.requestId =
+                        null;
+
+
+                    state.payloadFingerprint = null;
+                    state.submitAttempted = false;
+                    state.contactDrafts = {Telegram: "", Email: "", "Телефон": ""};
+                    state.activeContactType = null;
+                    form.reset();
+
+                    updateContactUI();
+                    updateBudgetPreview();
+                    updateMessageCounter();
+
+
+                    result.scrollIntoView({behavior: "smooth", block: "nearest"});
+
+
+                    return;
+
+                }
+
+
+                if (data.field_errors && typeof data.field_errors === "object") {
+                    Object.entries(data.field_errors).forEach(([name, message]) => {
+                        if (typeof message === "string") showFieldError(name, message);
+                    });
+                    form.querySelector(".field.invalid input:not([type='radio']), .field.invalid select, .field.invalid textarea")?.focus();
+                }
+
+                if (
+                    Array.isArray(
+                        data.errors
+                    )
+                ) {
+
+                    showResult(
+                        "error",
+                        "Проверьте данные: "
+                        +
+                        data.errors.join(" · ")
+                    );
+
+                    return;
+
+                }
+
+
+                showResult(
+                    "error",
+
+                    data.message
+                    ||
+                    "Не удалось обработать заявку."
+                );
+
+
+            }
+
+            catch (error) {
+
+                if (
+                    error.name
+                    === "AbortError"
+                ) {
+
+                    showResult(
+                        "error",
+                        "Сервис отвечает дольше обычного. Попробуйте отправить заявку ещё раз."
+                    );
+
+                }
+
+
+                else if (error.message === "INVALID_SERVER_RESPONSE") {
+                    showResult("error", "Сервер вернул неожиданный ответ. Повторите отправку: данные заявки сохранены.");
+                }
+                else {
+
+                    showResult(
+                        "error",
+                        "Не удалось связаться с сервером. Проверьте соединение и попробуйте ещё раз."
+                    );
+
+                }
+
+            }
+
+            finally {
+
+                clearTimeout(
+                    timeout
+                );
+
+                setLoading(false);
+
+            }
+
+        }
+    );
+
+
+    /* ================================
+       INITIAL STATE
+    ================================= */
+
+    document.querySelectorAll(".field[data-field]").forEach(field => {
+        const control = document.getElementById(field.dataset.field);
+        const error = field.querySelector(".field-error");
+        if (!control || !error) return;
+        error.id = `${field.dataset.field}-error`;
+        const hint = field.querySelector(".field-hint");
+        if (hint) hint.id = `${field.dataset.field}-hint`;
+        control.setAttribute("aria-describedby", [hint?.id, error.id].filter(Boolean).join(" "));
+    });
+    updateContactUI();
+    updateBudgetPreview();
+    updateMessageCounter();
+
+})();
+</script>
+
+</body>
+</html>
